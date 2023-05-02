@@ -1,10 +1,9 @@
-package org.example.util;
+package com.bilisdk.common.util;
 
 
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.bouncycastle.jcajce.provider.digest.Blake2b;
 
 import javax.xml.bind.DatatypeConverter;
 import java.io.UnsupportedEncodingException;
@@ -13,22 +12,19 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.security.*;
 import java.util.*;
-import org.bouncycastle.jcajce.provider.digest.Blake2b;
-import org.bouncycastle.jcajce.provider.digest.SHA3;
+
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
-import org.bouncycastle.crypto.digests.Blake2bDigest;
 import org.bouncycastle.util.encoders.Hex;
+import com.bilisdk.common.constant.BaseConstant;
 
-import java.nio.charset.StandardCharsets;
-import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 public class SignUtil {
     public static HashMap<String, String> signature(HashMap<String, String> head) throws UnsupportedEncodingException, NoSuchAlgorithmException {
         String query = "";
         List<String> keys = new ArrayList<String>();
-        head.put("appkey", CST.appTvkey);
+        head.put("appkey", BaseConstant.appTvkey);
         for (String k : head.keySet()) {
             keys.add(k);
         }
@@ -37,13 +33,13 @@ public class SignUtil {
             query += k + "=" + URLEncoder.encode(head.get(k), "UTF-8") + "&";
         }
         query = query.substring(0, query.length()-1);
-        head.put("sign", signature(query+CST.appTvSpec));
+        head.put("sign", signature(query+ BaseConstant.appTvSpec));
         return head;
     }
     public static HashMap<String, Object> signatureByAndroid(HashMap<String, Object> head) throws UnsupportedEncodingException, NoSuchAlgorithmException {
         String query = "";
         List<String> keys = new ArrayList<String>();
-        head.put("appkey", CST.appTvkey);
+        head.put("appkey", BaseConstant.appTvkey);
         for (String k : head.keySet()) {
             keys.add(k);
         }
@@ -52,18 +48,18 @@ public class SignUtil {
             query += k + "=" + URLEncoder.encode(head.get(k).toString(), "UTF-8") + "&";
         }
         query = query.substring(0, query.length()-1);
-        head.put("sign", signature(query+CST.appAndroidSpec));
+        head.put("sign", signature(query+ BaseConstant.appAndroidSpec));
         return head;
     }
     public static void signatureByAndroidWithoutReturn(Map<String, Object> params) throws Exception {
         List<String> keys = new ArrayList<String>(params.keySet());
-        params.put("appkey", CST.appTvkey);
+        params.put("appkey", BaseConstant.appTvkey);
         Collections.sort(keys);
         StringJoiner sj = new StringJoiner("&");
         for (String k : keys) {
             sj.add(k + "=" + URLEncoder.encode(params.get(k).toString(), StandardCharsets.UTF_8.name()));
         }
-        String query = sj.toString() + CST.appAndroidSpec;
+        String query = sj.toString() + BaseConstant.appAndroidSpec;
         MessageDigest md = MessageDigest.getInstance("MD5");
         byte[] hashInBytes = md.digest(query.getBytes(StandardCharsets.UTF_8));
         String sign = String.format("%032x", new BigInteger(1, hashInBytes));
@@ -71,13 +67,13 @@ public class SignUtil {
     }
     public static void signatureWithoutReturn(Map<String, String> params) throws Exception {
         List<String> keys = new ArrayList<String>(params.keySet());
-        params.put("appkey", CST.appTvkey);
+        params.put("appkey", BaseConstant.appTvkey);
         Collections.sort(keys);
         StringJoiner sj = new StringJoiner("&");
         for (String k : keys) {
             sj.add(k + "=" + URLEncoder.encode(params.get(k), StandardCharsets.UTF_8.name()));
         }
-        String query = sj.toString() + CST.appTvSpec;
+        String query = sj.toString() + BaseConstant.appTvSpec;
         MessageDigest md = MessageDigest.getInstance("MD5");
         byte[] hashInBytes = md.digest(query.getBytes(StandardCharsets.UTF_8));
         String sign = String.format("%032x", new BigInteger(1, hashInBytes));
@@ -105,23 +101,6 @@ public class SignUtil {
         return query.substring(0,query.length()-1);
     }
 
-
-//    public static String clientSign(String data) throws NoSuchAlgorithmException {
-//        MessageDigest h1 = MessageDigest.getInstance("SHA-512");
-//        MessageDigest h2 = MessageDigest.getInstance("SHA3-512");
-//        MessageDigest h3 = MessageDigest.getInstance("SHA-384");
-//        MessageDigest h4 = MessageDigest.getInstance("SHA3-384");
-//        Blake2b.Blake2b512 h5 = new Blake2b.Blake2b512();
-//
-//        h1.update(data.getBytes(StandardCharsets.UTF_8));
-//        h2.update(toHexString(h1.digest()).getBytes(StandardCharsets.UTF_8));
-//        h3.update(toHexString(h2.digest()).getBytes(StandardCharsets.UTF_8));
-//        h4.update(toHexString(h3.digest()).getBytes(StandardCharsets.UTF_8));
-//        h5.update(toHexString(h4.digest()).getBytes(StandardCharsets.UTF_8));
-//
-//        return toHexString(h5.digest());
-//    }
-
     private static String toHexString(byte[] bytes) {
         StringBuilder sb = new StringBuilder();
         for (byte b : bytes) {
@@ -148,7 +127,6 @@ public class SignUtil {
         }
         return _str;
     }
-
 
     private static String bytesToHex(byte[] bytes) {
         StringBuilder sb = new StringBuilder();

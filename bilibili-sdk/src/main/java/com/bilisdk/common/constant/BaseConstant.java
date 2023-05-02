@@ -1,7 +1,7 @@
-package org.example.util;
+package com.bilisdk.common.constant;
 
 
-public class CST {
+public class BaseConstant {
    public static String accessKey = "f4a47b0526e13659d9d0aa6230adda42";
    public static String actionKey = "appkey";
    public static String appTvSpec = "59b43e04ad6965f34319062b478f83dd";

@@ -1,4 +1,4 @@
-package org.example.util;
+package com.bilisdk.common.util;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -14,14 +14,7 @@ import com.google.zxing.qrcode.QRCodeWriter;
 import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
 import org.apache.commons.codec.binary.Base64;
 
-public class QRCodeGenerator {
-    public static void main(String[] args) throws Exception {
-        String url = "https://www.example.com/";
-//        String base64QRCode = generateQRCodeBase64(url);
-
-//        System.out.println("Base64 representation of QR Code: " + base64QRCode);
-    }
-
+public class QRCodeUtil {
     public static String generateQRCodeBase64(String url, boolean needHead) throws IOException {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         int size = 200;
