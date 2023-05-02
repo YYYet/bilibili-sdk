@@ -1,6 +1,7 @@
 package com.bilisdk.service.tv.sdk;
 
 import com.bilisdk.common.util.CommonUtil;
+import com.bilisdk.common.util.QRCodeUtil;
 import com.bilisdk.common.util.SignUtil;
 import com.bilisdk.service.tv.entity.resp.applycaptchainfo.ApplyCaptchaInfoResp;
 import com.bilisdk.service.tv.entity.resp.qrcodeInfo.QRcodeInfoResp;
@@ -43,6 +44,12 @@ public class LoginSdk extends LoginApi {
 //
 //    }
 
+
+    /**
+     * 获取登录链接
+     * @return
+     * @throws Exception
+     */
     public QRcodeInfoResp getQRcode() throws Exception {
         HashMap<String, String> data = new HashMap<String, String>();
         data.put("local_id", "0");
@@ -51,20 +58,32 @@ public class LoginSdk extends LoginApi {
         HashMap<String, String> signature = SignUtil.signature(data);
 
        return loginReq.getQRcode("multipart/form-data",signature);
-
     }
 
-    public void verifyQRcode(String authCode) throws Exception {
-        for (int i = 0; i < 10; i++) {
-            HashMap<String, String> data = new HashMap<String, String>();
-            data.put("local_id", "0");
-            data.put("ts", CommonUtil.getTimeStamps());
-            data.put("auth_code", authCode);
-            HashMap<String, String> signature = SignUtil.signature(data);
-            loginReq.verifyQRcode("multipart/form-data",signature);
-//            System.out.println(Forest.post(VERIFY_QRCODE_URL).contentTypeMultipartFormData().addBody(signature).execute(String.class));
-            Thread.sleep(5000);
-        }
+    /**
+     * 将登录链接转换为base64图片 提供给用户扫码
+     * @param url
+     * @param needHead
+     * @return
+     * @throws Exception
+     */
+    public String getQRcodeBase64(String url,boolean needHead) throws Exception {
+        return QRCodeUtil.generateQRCodeBase64(url, needHead);
+    }
+
+    /**
+     * 获取二维码状态
+     * @param authCode
+     * @return
+     * @throws Exception
+     */
+    public String verifyQRcode(String authCode) throws Exception {
+        HashMap<String, String> data = new HashMap<String, String>();
+        data.put("local_id", "0");
+        data.put("ts", CommonUtil.getTimeStamps());
+        data.put("auth_code", authCode);
+        HashMap<String, String> signature = SignUtil.signature(data);
+        return loginReq.verifyQRcode("multipart/form-data",signature);
 
     }
 }
