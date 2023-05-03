@@ -6,6 +6,7 @@ import com.bilisdk.common.util.SignUtil;
 import com.bilisdk.service.tv.entity.resp.applycaptchainfo.ApplyCaptchaInfoResp;
 import com.bilisdk.service.tv.entity.resp.qrcodeInfo.QRcodeInfoResp;
 import com.bilisdk.service.tv.api.LoginApi;
+import com.bilisdk.service.tv.entity.resp.verifyqrcodeinfo.VerifyQRcodeInfoResp;
 
 import java.util.HashMap;
 
@@ -77,13 +78,12 @@ public class LoginSdk extends LoginApi {
      * @return
      * @throws Exception
      */
-    public String verifyQRcode(String authCode) throws Exception {
+    public VerifyQRcodeInfoResp verifyQRcode(String authCode) throws Exception {
         HashMap<String, String> data = new HashMap<String, String>();
         data.put("local_id", "0");
         data.put("ts", CommonUtil.getTimeStamps());
         data.put("auth_code", authCode);
         HashMap<String, String> signature = SignUtil.signature(data);
         return loginReq.verifyQRcode("multipart/form-data",signature);
-
     }
 }

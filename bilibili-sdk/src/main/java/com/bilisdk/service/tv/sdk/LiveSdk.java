@@ -1,6 +1,12 @@
 package com.bilisdk.service.tv.sdk;
 
+import cn.hutool.core.bean.BeanUtil;
 import com.bilisdk.service.tv.api.LiveApi;
+import com.bilisdk.service.tv.entity.resp.givelikeInfo.GiveLikeInfoResp;
+import com.bilisdk.service.tv.entity.resp.medalInfo.MedalList;
+import com.bilisdk.service.tv.entity.resp.medalInfo.SpecialList;
+import com.bilisdk.service.tv.entity.resp.senddanmukuinfo.DanMuKuInfoResp;
+import com.bilisdk.service.tv.entity.resp.shareroominfo.ShareRoomInfoResp;
 import com.bilisdk.service.tv.entity.resp.userinfo.UserInfoResp;
 import com.bilisdk.service.tv.entity.resp.heartbeatinfo.HeartBeatInfoResp;
 import com.bilisdk.service.tv.entity.resp.medalInfo.MedalInfo;
@@ -86,7 +92,14 @@ public class LiveSdk extends LiveApi {
         CommonUtil.initGiveLikeParams(map, roomId);
         SignUtil.signature(map);
 
-        return  liveReq.giveALike(map).getCode() == 0;
+        return liveReq.giveALike(map).getCode() == 0;
+    }
+    public GiveLikeInfoResp giveLikeReturnEntity(String accessToken, long roomId) throws UnsupportedEncodingException, NoSuchAlgorithmException {
+        HashMap map = CommonUtil.initBaseParams(accessToken);
+        CommonUtil.initGiveLikeParams(map, roomId);
+        SignUtil.signature(map);
+
+        return liveReq.giveALike(map);
     }
     /**
      * 分享直播间
@@ -102,6 +115,12 @@ public class LiveSdk extends LiveApi {
         SignUtil.signature(map);
         return liveReq.shareRoom(map).getCode() == 0;
     }
+    public ShareRoomInfoResp shareRoomReurnEntity(String accessToken, long roomId) throws UnsupportedEncodingException, NoSuchAlgorithmException {
+        HashMap map = CommonUtil.initBaseParams(accessToken);
+        CommonUtil.initShareRoomParams(map, roomId);
+        SignUtil.signature(map);
+        return liveReq.shareRoom(map);
+    }
 
     /**
      *  直播间发送弹幕
@@ -112,14 +131,19 @@ public class LiveSdk extends LiveApi {
      * @throws UnsupportedEncodingException
      * @throws NoSuchAlgorithmException
      */
-    public  boolean sendDanMuKu(String accessToken, long roomId, String msg) throws UnsupportedEncodingException, NoSuchAlgorithmException {
+    public boolean sendDanMuKu(String accessToken, long roomId, String msg) throws UnsupportedEncodingException, NoSuchAlgorithmException {
         HashMap map =  CommonUtil.initBaseParams(accessToken);
-
         HashMap<String, String> signature = SignUtil.signature(map);
-
         HashMap<String, String> DanMuData= CommonUtil.initDanMuKuParams(roomId, msg);
-
-        return liveReq.sendDanmuKu(signature, DanMuData).getCode() == 0;
+        DanMuKuInfoResp danMuKuInfoResp = liveReq.sendDanmuKu(signature, DanMuData);
+        return danMuKuInfoResp.getCode() == 0;
+    }
+    public DanMuKuInfoResp sendDanMuKuReturnEntity(String accessToken, long roomId, String msg) throws UnsupportedEncodingException, NoSuchAlgorithmException {
+        HashMap map =  CommonUtil.initBaseParams(accessToken);
+        HashMap<String, String> signature = SignUtil.signature(map);
+        HashMap<String, String> DanMuData= CommonUtil.initDanMuKuParams(roomId, msg);
+        DanMuKuInfoResp danMuKuInfoResp = liveReq.sendDanmuKu(signature, DanMuData);
+        return danMuKuInfoResp;
     }
 
     /**
@@ -131,7 +155,7 @@ public class LiveSdk extends LiveApi {
      * @return
      * @throws Exception
      */
-    public boolean Heartbeat(String accessToken, long roomId, String[] uuids, String upId) throws Exception {
+    public boolean Heartbeat(String accessToken, long roomId, String[] uuids, String upId) throws UnsupportedEncodingException, NoSuchAlgorithmException{
 
         HashMap<String, String> map  = CommonUtil.initBaseParams(accessToken);
         CommonUtil.initHeartbeatParams(map, roomId, uuids, upId);
@@ -141,6 +165,15 @@ public class LiveSdk extends LiveApi {
         HeartBeatInfoResp execute = liveReq.heartBeat("multipart/form-data",map);
 
         return execute.getCode() == 0;
+    }
+    public HeartBeatInfoResp HeartbeatReturnEntity(String accessToken, long roomId, String[] uuids, String upId) throws UnsupportedEncodingException, NoSuchAlgorithmException{
+
+        HashMap<String, String> map  = CommonUtil.initBaseParams(accessToken);
+        CommonUtil.initHeartbeatParams(map, roomId, uuids, upId);
+        SignUtil.signature(map);
+        HeartBeatInfoResp execute = liveReq.heartBeat("multipart/form-data",map);
+
+        return execute;
     }
 
     /**
@@ -228,5 +261,50 @@ public class LiveSdk extends LiveApi {
         SignUtil.signatureWithoutReturn(data);
 
         return infoReq.verifyToken(data).get("code").equals(0);
+    }
+
+    /**
+     * 直播间是否开播
+     * @param accessToken
+     * @param roomId
+     * @return
+     * @throws Exception
+     */
+    public boolean isLiving(String accessToken, String roomId) throws Exception {
+        MedalInfo medalInfo = this.GetMedalInfo(accessToken).getData();
+        boolean flag = false;
+        for (MedalList medal : medalInfo.getList()) {
+            if (medal.getRoom_info().getLiving_status() == 1){
+                flag = true;
+                break;
+            }
+        }
+
+        return flag;
+    }
+
+    /**
+     * 根据房间号获取房间参数
+     * @param accessToken
+     * @param roomId
+     * @return
+     * @throws Exception
+     */
+    public MedalList GetOneMedalInfoByRoomId(String accessToken, String roomId) throws UnsupportedEncodingException, NoSuchAlgorithmException{
+        MedalInfo medalInfo = this.GetMedalInfo(accessToken).getData();
+        MedalList medal = new MedalList();
+        for (MedalList item : medalInfo.getList()) {
+            if (String.valueOf(item.getRoom_info().getRoom_id()).equals(roomId)){
+                medal = item;
+                break;
+            }
+        }
+        for (SpecialList item : medalInfo.getSpecial_list()) {
+            if (String.valueOf(item.getRoom_info().getRoom_id()).equals(roomId)){
+                BeanUtil.copyProperties(item, medal);
+                break;
+            }
+        }
+        return medal;
     }
 }

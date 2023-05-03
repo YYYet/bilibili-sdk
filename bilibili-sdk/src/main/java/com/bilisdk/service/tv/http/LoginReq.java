@@ -1,5 +1,6 @@
 package com.bilisdk.service.tv.http;
 
+import com.bilisdk.service.tv.entity.resp.verifyqrcodeinfo.VerifyQRcodeInfoResp;
 import com.dtflys.forest.annotation.Body;
 import com.dtflys.forest.annotation.Get;
 import com.dtflys.forest.annotation.Header;
@@ -59,5 +60,5 @@ public interface LoginReq {
                     "Connection: keep-alive"
             }
     )
-    String verifyQRcode(@Header(value = "Content-Type",defaultValue = "multipart/form-data") String contentType, @Body Map<String, String> body);
+    VerifyQRcodeInfoResp verifyQRcode(@Header(value = "Content-Type",defaultValue = "multipart/form-data") String contentType, @Body Map<String, String> body);
 }
