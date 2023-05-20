@@ -27,6 +27,8 @@ public  class Api {
 
 
     /** cookie接口 **/
+    public final static String ENTRY_ROOM_WITH_WEB = "https://live-trace.bilibili.com/xlive/data-interface/v1/x25Kn/E";
+    public final static String HEARTBEAT_WITH_WEB = "https://live-trace.bilibili.com/xlive/data-interface/v1/x25Kn/X";
 
     /** login接口 **/
     public final static String QRCODE_URL = "https://passport.snm0516.aisee.tv/x/passport-tv-login/qrcode/auth_code";

@@ -2,14 +2,12 @@ package com.bilisdk.common.options;
 
 import com.bilisdk.common.exception.NotTurnedOnException;
 import com.bilisdk.service.tv.entity.resp.medalInfo.MedalList;
-import com.bilisdk.service.tv.sdk.LiveSdk;
+import com.bilisdk.service.tv.sdk.TvLiveSdk;
 import com.google.devtools.common.options.OptionsParser;
 
 import java.io.UnsupportedEncodingException;
 import java.security.NoSuchAlgorithmException;
 import java.util.Collections;
-import java.util.Timer;
-import java.util.TimerTask;
 import java.util.UUID;
 import java.util.concurrent.*;
 
@@ -40,8 +38,8 @@ public class ServerCommond {
         String accessToken = options.accessToken;
         Long roomId = Long.parseLong(options.roomId);
 
-        LiveSdk liveSdk = new LiveSdk();
-        boolean status = liveSdk.shareRoom(accessToken, roomId);
+        TvLiveSdk tvLiveSdk = new TvLiveSdk();
+        boolean status = tvLiveSdk.shareRoom(accessToken, roomId);
         System.out.printf("直播间 【 %s 】 弹幕发送状态: %s \n\r", roomId, status);
     }
 
@@ -52,8 +50,8 @@ public class ServerCommond {
         String danMu = options.danMu;
         Long roomId = Long.parseLong(options.roomId);
 
-        LiveSdk liveSdk = new LiveSdk();
-        boolean status = liveSdk.sendDanMuKu(accessToken, roomId, danMu);
+        TvLiveSdk tvLiveSdk = new TvLiveSdk();
+        boolean status = tvLiveSdk.sendDanMuKu(accessToken, roomId, danMu);
         System.out.printf("直播间 【 %s 】 弹幕发送状态: %s \n\r", roomId, status);
     }
 
@@ -63,8 +61,8 @@ public class ServerCommond {
         String accessToken = options.accessToken;
         Long roomId = Long.parseLong(options.roomId);
 
-        LiveSdk liveSdk = new LiveSdk();
-        boolean status = liveSdk.giveLike(accessToken, roomId);
+        TvLiveSdk tvLiveSdk = new TvLiveSdk();
+        boolean status = tvLiveSdk.giveLike(accessToken, roomId);
         System.out.printf("直播间 【 %s 】 点赞状态: %s \n\r", roomId, status);
 
     }
@@ -90,21 +88,21 @@ public class ServerCommond {
         String accessToken = options.accessToken;
         String roomId = options.roomId;
 
-        LiveSdk liveSdk = new LiveSdk();
+        TvLiveSdk tvLiveSdk = new TvLiveSdk();
 
-        MedalList medal = liveSdk.GetOneMedalInfoByRoomId(accessToken, roomId);
+        MedalList medal = tvLiveSdk.GetOneMedalInfoByRoomId(accessToken, roomId);
         Long longRoomId = Long.parseLong(roomId);
         String targetId = String.valueOf(medal.getMedal().getTarget_id());
 
         if (options.liveTime.equals("-1")){
-            heartBeat(medal, liveSdk, accessToken, longRoomId, targetId);
+            heartBeat(medal, tvLiveSdk, accessToken, longRoomId, targetId);
         }
         if (!options.liveTime.equals("-1")){
 
             ExecutorService executor = Executors.newSingleThreadExecutor();
             Future future = executor.submit(()->{
                 try {
-                    heartBeat(medal, liveSdk, accessToken, longRoomId, targetId);
+                    heartBeat(medal, tvLiveSdk, accessToken, longRoomId, targetId);
                 } catch (UnsupportedEncodingException e) {
                     throw new RuntimeException(e);
                 } catch (NoSuchAlgorithmException e) {
@@ -126,9 +124,9 @@ public class ServerCommond {
         }
     }
 
-    private static void heartBeat(MedalList medal, LiveSdk liveSdk, String accessToken, Long longRoomId, String targetId) throws UnsupportedEncodingException, NoSuchAlgorithmException, InterruptedException {
+    private static void heartBeat(MedalList medal, TvLiveSdk tvLiveSdk, String accessToken, Long longRoomId, String targetId) throws UnsupportedEncodingException, NoSuchAlgorithmException, InterruptedException {
         while (true){
-            boolean heartbeat = liveSdk.Heartbeat(accessToken, longRoomId, UUIDS, targetId);
+            boolean heartbeat = tvLiveSdk.Heartbeat(accessToken, longRoomId, UUIDS, targetId);
             if (!heartbeat){
                 Thread.sleep(10 * 1000);
                 System.out.printf("【 %s 】的直播间 【 %s 】 心跳包发送状态: %s 10秒后重试 \n\r", medal.getAnchor_info().getNick_name(), longRoomId, heartbeat);
@@ -144,7 +142,7 @@ public class ServerCommond {
             printUsage(parser);
             throw new Exception("accessToken为空");
         }
-        if (options.roomId.isEmpty() ){
+        if (options.roomId.isEmpty()){
             printUsage(parser);
             throw new Exception("roomId为空");
         }
