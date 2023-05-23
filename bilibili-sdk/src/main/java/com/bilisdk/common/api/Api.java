@@ -38,4 +38,10 @@ public  class Api {
     public final static String VERIFY_QRCODE_URL = "https://passport.bilibili.com/x/passport-tv-login/qrcode/poll";
     public final static String SEND_SMS_URL = "https://passport.bilibili.com/x/passport-login/sms/send";
     public final static String APPLY_CAPTCHA_URL = "https://passport.bilibili.com/x/passport-login/captcha?source=main_web";
+
+    /**
+     * 直播接口
+     */
+    public final static String ROOM_INIT = "https://api.live.bilibili.com/room/v1/Room/room_init";
+
 }
