@@ -20,6 +20,15 @@ public class ServerOptions extends OptionsBase {
     public String accessToken;
 
     @Option(
+            name = "loginModel",
+            abbrev = 'l',
+            help = "登录模式",
+            category = "参数",
+            defaultValue = "tv"
+    )
+    public String loginModel;
+
+    @Option(
             name = "roomId",
             abbrev = 'r',
             help = "房间Id",

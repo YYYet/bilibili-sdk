@@ -45,6 +45,7 @@ public interface TvLoginReq {
     )
     QRcodeInfoResp getQRcode(@Header(value = "Content-Type",defaultValue = "multipart/form-data") String contentType, @Body Map<String, String> body);
 
+
     /**
      * 获取二维码状态
      * @param contentType

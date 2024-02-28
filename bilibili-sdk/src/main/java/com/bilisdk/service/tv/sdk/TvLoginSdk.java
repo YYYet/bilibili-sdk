@@ -1,24 +1,20 @@
 package com.bilisdk.service.tv.sdk;
 
+import cn.hutool.core.net.URLEncodeUtil;
+import cn.hutool.json.JSONUtil;
 import com.bilisdk.common.util.CommonUtil;
 import com.bilisdk.common.util.QRCodeUtil;
-import com.bilisdk.common.util.SignUtil;
+import com.bilisdk.common.util.TvSignUtil;
 import com.bilisdk.service.tv.entity.resp.applycaptchainfo.ApplyCaptchaInfoResp;
 import com.bilisdk.service.tv.entity.resp.qrcodeInfo.QRcodeInfoResp;
 import com.bilisdk.service.tv.api.TvLoginApi;
 import com.bilisdk.service.tv.entity.resp.verifyqrcodeinfo.VerifyQRcodeInfoResp;
 
 import java.util.HashMap;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class TvLoginSdk extends TvLoginApi {
-//    final static String QRCODE_URL = "https://passport.bilibili.com/x/passport-tv-login/qrcode/auth_code";
-    final static String QRCODE_URL = "https://passport.snm0516.aisee.tv/x/passport-tv-login/qrcode/auth_code";
-    final static String WEB_QRCODE_URL = "https://passport.bilibili.com/x/passport-login/web/qrcode/generate";
-    final static String WEB_SCAN_QRCODE_URL = "https://passport.bilibili.com/x/passport-login/web/qrcode/poll";
-    final static String SCAN_QRCODE_URL = "https://passport.snm0516.aisee.tv/x/passport-tv-login/qrcode/poll";
-    final static String VERIFY_QRCODE_URL = "https://passport.bilibili.com/x/passport-tv-login/qrcode/poll";
-    final static String SEND_SMS_URL = "https://passport.bilibili.com/x/passport-login/sms/send";
-    final static String APPLY_CAPTCHA_URL = "https://passport.bilibili.com/x/passport-login/captcha?source=main_web";
 
 
 
@@ -39,7 +35,7 @@ public class TvLoginSdk extends TvLoginApi {
 //        data.put("platform", "android");
 //        data.put("tel", "+"+phoneNumber);
 //        data.put("ts", CommonUtil.getTimeStamps());
-//        SignUtil.signatureByAndroidWithoutReturn(data);
+//        TvSignUtil.signatureByAndroidWithoutReturn(data);
 //
 //        System.out.println(Forest.post(SEND_SMS_URL).contentTypeMultipartFormData().addBody(data).execute(String.class));
 //
@@ -56,7 +52,7 @@ public class TvLoginSdk extends TvLoginApi {
         data.put("local_id", "0");
         data.put("ts", CommonUtil.getTimeStamps());
 //        data.put("appkey", BaseConstant.appTvkey);
-        HashMap<String, String> signature = SignUtil.signature(data);
+        HashMap<String, String> signature = TvSignUtil.signature(data);
 
        return tvLoginReq.getQRcode("multipart/form-data",signature);
     }
@@ -83,7 +79,50 @@ public class TvLoginSdk extends TvLoginApi {
         data.put("local_id", "0");
         data.put("ts", CommonUtil.getTimeStamps());
         data.put("auth_code", authCode);
-        HashMap<String, String> signature = SignUtil.signature(data);
+        HashMap<String, String> signature = TvSignUtil.signature(data);
         return tvLoginReq.verifyQRcode("multipart/form-data",signature);
+    }
+
+
+    public static void startTvLogin() throws Exception {
+        TvLoginSdk tvLoginSdk = new TvLoginSdk();
+        QRcodeInfoResp qRcode = tvLoginSdk.getQRcode();
+//        QRcodeInfoResp qRcode = tvLoginSdk.getQRcode();
+        String auth_code = qRcode.getData().getAuth_code();
+        String format = String.format("https://tool.lu/qrcode/basic.html?text=%s", URLEncodeUtil.encode(qRcode.getData().getUrl()));
+        System.out.println("点击或者复制到下方连接到浏览器，使用移动端b站扫码登录：");
+        System.out.println(format);
+        //动态的添加定时任务每5秒执行一次
+        final int[] count = {0};
+        Timer timer = new Timer();
+        timer.scheduleAtFixedRate(new TimerTask() {
+            @Override
+            public void run() {
+                // 每隔10秒执行的操作
+                count[0]++;
+
+                try {
+                    VerifyQRcodeInfoResp verifyQRcodeInfoResp = tvLoginSdk.verifyQRcode(auth_code);
+                    System.out.println(verifyQRcodeInfoResp.getMessage());
+                    if(verifyQRcodeInfoResp.getCode() == 0){
+                        System.out.println("登录完成");
+                        System.out.println(JSONUtil.toJsonStr(verifyQRcodeInfoResp.getData()));
+                        CommonUtil.saveCookieOrToken(JSONUtil.toJsonStr(verifyQRcodeInfoResp.getData().getToken_info()), true);
+                        timer.cancel();
+                    }
+                    if(verifyQRcodeInfoResp.getCode() == 86038){
+                        timer.cancel();
+                        throw new RuntimeException("二维码失效");
+                    }
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+                if (count[0] == 24){
+                    System.out.println("过期");
+                    throw new RuntimeException();
+                }
+            }
+        }, 0, 5000);
+
     }
 }

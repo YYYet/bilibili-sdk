@@ -1,12 +1,30 @@
 package com.bilisdk.common.util;
 
+import cn.hutool.core.date.DateUtil;
+import cn.hutool.core.io.FileUtil;
+import cn.hutool.core.io.IORuntimeException;
 import com.bilisdk.common.constant.BaseConstant;
 
+import java.io.File;
 import java.time.Instant;
 import java.util.HashMap;
 import java.util.Random;
 
 public class CommonUtil {
+    public static void saveCookieOrToken(String content, boolean isToken){
+        //将String写入文件，覆盖模式，字符集为UTF-8
+
+        String path = isToken?"tokens.txt":"cookies.txt";
+        //path指定路径下的文件如不存在，则创建
+
+        try {
+            String result = "【"+DateUtil.now() + "】  "+content;
+            File file = FileUtil.appendUtf8String(result, new File(path));
+        }catch (IORuntimeException e){
+            //抛出一个运行时异常(直接停止掉程序)
+            throw new RuntimeException("运行时异常",e);
+        }
+    }
     public static String getTimeStamps(){
         return String.valueOf(Instant.now().getEpochSecond());
     }
@@ -94,7 +112,7 @@ public class CommonUtil {
         map.put("client_ts", String.valueOf(Instant.now().getEpochSecond()));
 
         String dataStr = buildClientSignData(map);
-        map.put("client_sign",SignUtil.clientSign(dataStr));
+        map.put("client_sign", TvSignUtil.clientSign(dataStr));
         return map;
     }
     public static HashMap<String, String> initEntryRoomParams(HashMap<String, String> map,long roomId, String[] uuids, String upId){

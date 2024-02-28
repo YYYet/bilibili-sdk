@@ -18,23 +18,9 @@ public class Main
 {
 
     public static void main( String[] args ) throws UnsupportedEncodingException, NoSuchAlgorithmException, InterruptedException {
-//        OptionsParser parser = OptionsParser.newOptionsParser(ServerOptions.class);
-//        parser.parseAndExitUponError(args);
-//        ServerOptions options = parser.getOptions(ServerOptions.class);
-//        checkAction(parser, options);
-
-//        BilibiliBinaryFrameHandlerService bilibiliBinaryFrameHandlerService = new BilibiliBinaryFrameHandlerService();
-//        bilibiliBinaryFrameHandlerService.exec(26295814, "");
-        ThreadPool.getThreadPool().executor(26295814, "");
-        ThreadPool.getThreadPool().executor(22557294, ""); // CV
-
-
- 
-//        TvLiveSdk tvLiveSdk = new TvLiveSdk();
-//        MedalList medalList = tvLiveSdk.GetOneMedalInfoByRoomId("f4a47b0526e13659d9d0aa6230adda42", "27588966");
-//        System.out.println(JSONUtil.toJsonStr(medalList));
-
-//        new WebLiveSdk()
-
+        OptionsParser parser = OptionsParser.newOptionsParser(ServerOptions.class);
+        parser.parseAndExitUponError(args);
+        ServerOptions options = parser.getOptions(ServerOptions.class);
+        checkAction(parser, options);
     }
 }

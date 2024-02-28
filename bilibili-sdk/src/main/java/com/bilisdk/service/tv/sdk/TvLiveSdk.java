@@ -1,6 +1,7 @@
 package com.bilisdk.service.tv.sdk;
 
 import cn.hutool.json.JSONUtil;
+import com.bilisdk.common.util.TvSignUtil;
 import com.bilisdk.service.tv.api.TvLiveApi;
 import com.bilisdk.service.tv.entity.resp.givelikeInfo.GiveLikeInfoResp;
 import com.bilisdk.service.tv.entity.resp.medalInfo.MedalList;
@@ -12,7 +13,6 @@ import com.bilisdk.service.tv.entity.resp.heartbeatinfo.HeartBeatInfoResp;
 import com.bilisdk.service.tv.entity.resp.medalInfo.MedalInfo;
 import com.bilisdk.service.tv.entity.resp.medalInfo.MedalInfoResp;
 import com.bilisdk.common.util.CommonUtil;
-import com.bilisdk.common.util.SignUtil;
 
 import java.io.UnsupportedEncodingException;
 import java.security.NoSuchAlgorithmException;
@@ -32,7 +32,7 @@ public class TvLiveSdk extends TvLiveApi {
      */
     public UserInfoResp GetUserInfo(String accessToken) throws UnsupportedEncodingException, NoSuchAlgorithmException {
         HashMap<String, String> map = CommonUtil.initBaseParams(accessToken);
-        HashMap<String, String> signature = SignUtil.signature(map);
+        HashMap<String, String> signature = TvSignUtil.signature(map);
 
         return tvLiveReq.getUserInfo(signature);
     }
@@ -54,7 +54,7 @@ public class TvLiveSdk extends TvLiveApi {
         boolean isNext = true;
         MedalInfoResp medalInfoAllResp = new MedalInfoResp();
         while (isNext){
-            HashMap<String, String> signature = SignUtil.signature(map);
+            HashMap<String, String> signature = TvSignUtil.signature(map);
 
             page = String.valueOf(Integer.parseInt(page)+1);
             map.put("page", page);
@@ -90,14 +90,14 @@ public class TvLiveSdk extends TvLiveApi {
     public  boolean giveLike(String accessToken, long roomId) throws UnsupportedEncodingException, NoSuchAlgorithmException {
         HashMap map = CommonUtil.initBaseParams(accessToken);
         CommonUtil.initGiveLikeParams(map, roomId);
-        SignUtil.signature(map);
+        TvSignUtil.signature(map);
 
         return tvLiveReq.giveALike(map).getCode() == 0;
     }
     public GiveLikeInfoResp giveLikeReturnEntity(String accessToken, long roomId) throws UnsupportedEncodingException, NoSuchAlgorithmException {
         HashMap map = CommonUtil.initBaseParams(accessToken);
         CommonUtil.initGiveLikeParams(map, roomId);
-        SignUtil.signature(map);
+        TvSignUtil.signature(map);
 
         return tvLiveReq.giveALike(map);
     }
@@ -112,13 +112,13 @@ public class TvLiveSdk extends TvLiveApi {
     public  boolean shareRoom(String accessToken, long roomId) throws UnsupportedEncodingException, NoSuchAlgorithmException {
         HashMap map = CommonUtil.initBaseParams(accessToken);
         CommonUtil.initShareRoomParams(map, roomId);
-        SignUtil.signature(map);
+        TvSignUtil.signature(map);
         return tvLiveReq.shareRoom(map).getCode() == 0;
     }
     public ShareRoomInfoResp shareRoomReurnEntity(String accessToken, long roomId) throws UnsupportedEncodingException, NoSuchAlgorithmException {
         HashMap map = CommonUtil.initBaseParams(accessToken);
         CommonUtil.initShareRoomParams(map, roomId);
-        SignUtil.signature(map);
+        TvSignUtil.signature(map);
         return tvLiveReq.shareRoom(map);
     }
 
@@ -133,14 +133,14 @@ public class TvLiveSdk extends TvLiveApi {
      */
     public boolean sendDanMuKu(String accessToken, long roomId, String msg) throws UnsupportedEncodingException, NoSuchAlgorithmException {
         HashMap map =  CommonUtil.initBaseParams(accessToken);
-        HashMap<String, String> signature = SignUtil.signature(map);
+        HashMap<String, String> signature = TvSignUtil.signature(map);
         HashMap<String, String> DanMuData= CommonUtil.initDanMuKuParams(roomId, msg);
         DanMuKuInfoResp danMuKuInfoResp = tvLiveReq.sendDanmuKu(signature, DanMuData);
         return danMuKuInfoResp.getCode() == 0;
     }
     public DanMuKuInfoResp sendDanMuKuReturnEntity(String accessToken, long roomId, String msg) throws UnsupportedEncodingException, NoSuchAlgorithmException {
         HashMap map =  CommonUtil.initBaseParams(accessToken);
-        HashMap<String, String> signature = SignUtil.signature(map);
+        HashMap<String, String> signature = TvSignUtil.signature(map);
         HashMap<String, String> DanMuData= CommonUtil.initDanMuKuParams(roomId, msg);
         DanMuKuInfoResp danMuKuInfoResp = tvLiveReq.sendDanmuKu(signature, DanMuData);
         return danMuKuInfoResp;
@@ -160,7 +160,7 @@ public class TvLiveSdk extends TvLiveApi {
         HashMap<String, String> map  = CommonUtil.initBaseParams(accessToken);
         CommonUtil.initHeartbeatParams(map, roomId, uuids, upId);
 
-        SignUtil.signature(map);
+        TvSignUtil.signature(map);
 
         HeartBeatInfoResp execute = tvLiveReq.heartBeat("multipart/form-data",map);
 
@@ -170,7 +170,7 @@ public class TvLiveSdk extends TvLiveApi {
 
         HashMap<String, String> map  = CommonUtil.initBaseParams(accessToken);
         CommonUtil.initHeartbeatParams(map, roomId, uuids, upId);
-        SignUtil.signature(map);
+        TvSignUtil.signature(map);
         HeartBeatInfoResp execute = tvLiveReq.heartBeat("multipart/form-data",map);
 
         return execute;
@@ -190,7 +190,7 @@ public class TvLiveSdk extends TvLiveApi {
 
         CommonUtil.initEntryRoomParams(data, roomId, uuids, upId);
 
-        SignUtil.signatureWithoutReturn(data);
+        TvSignUtil.signatureWithoutReturn(data);
 
 //        return Forest.post(TvLiveSdk.MOBILE_ENTRY_ROOM_URL).contentTypeMultipartFormData().addBody(data).execute(String.class);
         return "";
@@ -212,7 +212,7 @@ public class TvLiveSdk extends TvLiveApi {
         data.put("type", "1");
         data.put("version", "0");
 
-        SignUtil.signatureWithoutReturn(data);
+        TvSignUtil.signatureWithoutReturn(data);
 
         return tvLiveReq.takeOffMedal(data).getCode() == 0;
     }
@@ -232,7 +232,7 @@ public class TvLiveSdk extends TvLiveApi {
         data.put("type", "1");
         data.put("version", "0");
 
-        SignUtil.signatureWithoutReturn(data);
+        TvSignUtil.signatureWithoutReturn(data);
 
         return tvLiveReq.wearMedal(data).getCode() == 0;
     }
@@ -246,7 +246,7 @@ public class TvLiveSdk extends TvLiveApi {
     public String SignIn(String accessToken) throws Exception {
         HashMap<String, String> data  = CommonUtil.initBaseParams(accessToken);
 
-        SignUtil.signatureWithoutReturn(data);
+        TvSignUtil.signatureWithoutReturn(data);
 
         return  tvLiveReq.sign(data);
     }
@@ -259,7 +259,7 @@ public class TvLiveSdk extends TvLiveApi {
     public boolean VerifyToken(String accessToken) throws Exception {
         HashMap<String, String> data  = CommonUtil.initBaseParams(accessToken);
 
-        SignUtil.signatureWithoutReturn(data);
+        TvSignUtil.signatureWithoutReturn(data);
 
         return tvInfoReq.verifyToken(data).get("code").equals(0);
     }
