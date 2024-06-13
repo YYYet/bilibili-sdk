@@ -14,6 +14,7 @@ import com.bilisdk.service.tv.entity.resp.heartbeatinfo.HeartBeatInfoResp;
 import com.bilisdk.service.tv.entity.resp.medalInfo.MedalInfo;
 import com.bilisdk.service.tv.entity.resp.medalInfo.MedalInfoResp;
 import com.bilisdk.common.util.CommonUtil;
+import com.dtflys.forest.http.ForestResponse;
 
 import java.io.UnsupportedEncodingException;
 import java.security.NoSuchAlgorithmException;
@@ -37,7 +38,7 @@ public class TvLiveSdk extends TvLiveApi {
 
         return tvLiveReq.getUserInfo(signature);
     }
-    public void GetUserInfoWithIpByAndroid(String accessToken,String uid) throws UnsupportedEncodingException, NoSuchAlgorithmException {
+    public ForestResponse GetUserInfoWithIpByAndroid(String accessToken, String uid) throws UnsupportedEncodingException, NoSuchAlgorithmException {
 //        HashMap<String, String> map = CommonUtil.initBaseParams(accessToken);
         HashMap<String, String> query = new HashMap<>();
         query.put("access_key", accessToken);
@@ -49,7 +50,7 @@ public class TvLiveSdk extends TvLiveApi {
         query.put("ts", CommonUtil.getTimeStamps());
         HashMap<String, String> signature = TvSignUtil.signature(query);
 
-        System.out.println(tvLiveReq.getUserInfoWithIp(signature));
+        return tvLiveReq.getUserInfoWithIp(signature);
     }
 
     /**
