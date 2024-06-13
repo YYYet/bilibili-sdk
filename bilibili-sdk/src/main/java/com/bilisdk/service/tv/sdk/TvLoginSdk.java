@@ -1,5 +1,6 @@
 package com.bilisdk.service.tv.sdk;
 
+import cn.hutool.Hutool;
 import cn.hutool.core.net.URLEncodeUtil;
 import cn.hutool.json.JSONUtil;
 import com.bilisdk.common.util.CommonUtil;
@@ -8,7 +9,9 @@ import com.bilisdk.common.util.TvSignUtil;
 import com.bilisdk.service.tv.entity.resp.applycaptchainfo.ApplyCaptchaInfoResp;
 import com.bilisdk.service.tv.entity.resp.qrcodeInfo.QRcodeInfoResp;
 import com.bilisdk.service.tv.api.TvLoginApi;
+import com.bilisdk.service.tv.entity.resp.verifyqrcodeinfo.Cookies;
 import com.bilisdk.service.tv.entity.resp.verifyqrcodeinfo.VerifyQRcodeInfoResp;
+import com.dtflys.forest.http.ForestResponse;
 
 import java.util.HashMap;
 import java.util.Timer;
@@ -80,7 +83,8 @@ public class TvLoginSdk extends TvLoginApi {
         data.put("ts", CommonUtil.getTimeStamps());
         data.put("auth_code", authCode);
         HashMap<String, String> signature = TvSignUtil.signature(data);
-        return tvLoginReq.verifyQRcode("multipart/form-data",signature);
+        ForestResponse forestResponse = tvLoginReq.verifyQRcodeWithForestResponse("multipart/form-data", signature);
+        return  JSONUtil.toBean(forestResponse.getContent(), VerifyQRcodeInfoResp.class);
     }
 
 
@@ -106,8 +110,18 @@ public class TvLoginSdk extends TvLoginApi {
                     System.out.println(verifyQRcodeInfoResp.getMessage());
                     if(verifyQRcodeInfoResp.getCode() == 0){
                         System.out.println("登录完成");
-                        System.out.println(JSONUtil.toJsonStr(verifyQRcodeInfoResp.getData()));
-                        CommonUtil.saveCookieOrToken(JSONUtil.toJsonStr(verifyQRcodeInfoResp.getData().getToken_info()), true);
+//                        System.out.println(JSONUtil.toJsonStr(verifyQRcodeInfoResp.getData()));
+//                        System.out.println(verifyQRcodeInfoResp.getData().getCookie_info());
+                        String cookie = CommonUtil.list2Cookie(verifyQRcodeInfoResp);
+                        System.out.println(cookie);
+//                        System.out.println(JSONUtil.toJsonStr(verifyQRcodeInfoResp.getData().getCookie_info()));
+                        HashMap<String, Object> result = new HashMap<>();
+                        result.put("token", verifyQRcodeInfoResp.getData().getToken_info());
+                        result.put("cookie", cookie);
+                        for (Cookies cookieSingle : verifyQRcodeInfoResp.getData().getCookie_info().getCookies()) {
+                            result.put(cookieSingle.getName(), cookieSingle);
+                        }
+                        CommonUtil.saveCookieOrToken(JSONUtil.toJsonStr(result), true);
                         timer.cancel();
                     }
                     if(verifyQRcodeInfoResp.getCode() == 86038){

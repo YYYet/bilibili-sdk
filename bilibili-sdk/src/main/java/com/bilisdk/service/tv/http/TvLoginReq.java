@@ -8,6 +8,7 @@ import com.dtflys.forest.annotation.Post;
 import com.bilisdk.common.api.Api;
 import com.bilisdk.service.tv.entity.resp.applycaptchainfo.ApplyCaptchaInfoResp;
 import com.bilisdk.service.tv.entity.resp.qrcodeInfo.QRcodeInfoResp;
+import com.dtflys.forest.http.ForestResponse;
 
 import java.util.Map;
 
@@ -62,4 +63,16 @@ public interface TvLoginReq {
             }
     )
     VerifyQRcodeInfoResp verifyQRcode(@Header(value = "Content-Type",defaultValue = "multipart/form-data") String contentType, @Body Map<String, String> body);
+
+    @Post(
+            url = Api.VERIFY_QRCODE_URL,
+            headers = {
+                    "User-Agent: Mozilla/5.0 BiliDroid/6.73.1 (bbcallen@gmail.com) os/android model/Mi 10 Pro mobi_app/android build/6731100 channel/xiaomi innerVer/6731110 osVer/12 network/2",
+                    "Accept: application/json",
+                    "Accept-Language: en-US,en;q=0.5",
+                    "Connection: keep-alive"
+            }
+    )
+    ForestResponse verifyQRcodeWithForestResponse(@Header(value = "Content-Type",defaultValue = "multipart/form-data") String contentType, @Body Map<String, String> body);
+
 }

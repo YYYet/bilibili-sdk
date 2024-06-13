@@ -2,14 +2,14 @@ package com.bilisdk.common.options;
 
 import com.google.devtools.common.options.Option;
 import com.google.devtools.common.options.OptionsBase;
- 
+
 import java.util.List;
- 
+
 /**
  * Command-line options definition for example server.
  */
 public class ServerOptions extends OptionsBase {
- 
+
     @Option(
             name = "accessToken",
             abbrev = 't',
@@ -20,13 +20,12 @@ public class ServerOptions extends OptionsBase {
     public String accessToken;
 
     @Option(
-            name = "loginModel",
-            abbrev = 'l',
+            name = "model",
             help = "登录模式",
             category = "参数",
             defaultValue = "tv"
     )
-    public String loginModel;
+    public String model;
 
     @Option(
             name = "roomId",
@@ -36,6 +35,15 @@ public class ServerOptions extends OptionsBase {
             defaultValue = ""
     )
     public String roomId;
+
+    @Option(
+            name = "uid",
+            abbrev = 'u',
+            help = "用户id",
+            category = "参数",
+            defaultValue = ""
+    )
+    public String uid;
 
     @Option(
             name = "danMu",
@@ -85,5 +93,20 @@ public class ServerOptions extends OptionsBase {
             defaultValue = "false"
     )
     public boolean shareRoom;
+
+    @Option(
+            name = "charge",
+            help = "充电",
+            category = "行为",
+            defaultValue = "false"
+    )
+    public boolean charge;
+    @Option(
+            name = "login",
+            help = "登录",
+            category = "行为",
+            defaultValue = "false"
+    )
+    public boolean login;
 
 }

@@ -1,6 +1,7 @@
 package com.bilisdk.service.tv.sdk;
 
 import cn.hutool.json.JSONUtil;
+import com.bilisdk.common.constant.BaseConstant;
 import com.bilisdk.common.util.TvSignUtil;
 import com.bilisdk.service.tv.api.TvLiveApi;
 import com.bilisdk.service.tv.entity.resp.givelikeInfo.GiveLikeInfoResp;
@@ -35,6 +36,20 @@ public class TvLiveSdk extends TvLiveApi {
         HashMap<String, String> signature = TvSignUtil.signature(map);
 
         return tvLiveReq.getUserInfo(signature);
+    }
+    public void GetUserInfoWithIpByAndroid(String accessToken,String uid) throws UnsupportedEncodingException, NoSuchAlgorithmException {
+//        HashMap<String, String> map = CommonUtil.initBaseParams(accessToken);
+        HashMap<String, String> query = new HashMap<>();
+        query.put("access_key", accessToken);
+        query.put("appkey", BaseConstant.appTvkey);
+        query.put("mobi_app", "android");
+        query.put("vmid", uid);
+        query.put("ps", "10");
+        query.put("build", "1");
+        query.put("ts", CommonUtil.getTimeStamps());
+        HashMap<String, String> signature = TvSignUtil.signature(query);
+
+        System.out.println(tvLiveReq.getUserInfoWithIp(signature));
     }
 
     /**

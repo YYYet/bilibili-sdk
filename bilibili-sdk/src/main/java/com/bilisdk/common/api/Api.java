@@ -23,6 +23,10 @@ public  class Api {
     public final static  String SIGN_URL_WITH_TOKEN = "https://api.live.bilibili.com/rc/v1/Sign/doSign";
     // accessToken校验
     public final static  String TOKEN_VERIFY_WITH_TOKEN = "https://app.bilibili.com/x/v2/account/mine";
+    // web充电接口
+    public final static  String CHARGE_WITH_COOKIE = "https://api.bilibili.com/x/ugcpay/web/v2/trade/elec/pay/quick";
+    public final static  String RECEIVE_CARD_WITH_COOKIE = "https://api.bilibili.com/x/vip/privilege/receive";
+    public final static  String GET_TARGET_UERINFO_WITH_IP_ANDROID = "https://app.bilibili.com/x/v2/space";
 
 
 

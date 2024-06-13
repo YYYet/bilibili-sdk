@@ -9,6 +9,7 @@ import com.bilisdk.service.tv.entity.resp.senddanmukuinfo.DanMuKuInfoResp;
 import com.bilisdk.service.tv.entity.resp.shareroominfo.ShareRoomInfoResp;
 import com.bilisdk.service.tv.entity.resp.userinfo.UserInfoResp;
 import com.bilisdk.common.api.Api;
+import com.dtflys.forest.http.ForestResponse;
 
 import java.util.Map;
 
@@ -28,6 +29,17 @@ public interface TvLiveReq {
             }
     )
     UserInfoResp getUserInfo(@Query Map<String, String> query);
+
+    @Get(
+            url = Api.GET_TARGET_UERINFO_WITH_IP_ANDROID,
+            headers = {
+                    "User-Agent: Mozilla/5.0 BiliDroid/6.73.1 (bbcallen@gmail.com) os/android model/Mi 10 Pro mobi_app/android build/6731100 channel/xiaomi innerVer/6731110 osVer/12 network/2",
+                    "Accept: application/json",
+                    "Accept-Language: en-US,en;q=0.5",
+                    "Connection: keep-alive"
+            }
+    )
+    ForestResponse getUserInfoWithIp(@Query Map<String, String> query);
 
     /**
      * 获取用户所有粉丝勋章

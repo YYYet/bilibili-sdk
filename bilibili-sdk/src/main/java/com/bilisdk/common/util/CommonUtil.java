@@ -3,18 +3,51 @@ package com.bilisdk.common.util;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.io.IORuntimeException;
+import cn.hutool.core.net.URLEncodeUtil;
+import cn.hutool.json.JSONUtil;
 import com.bilisdk.common.constant.BaseConstant;
+import com.bilisdk.service.tv.entity.resp.verifyqrcodeinfo.Cookies;
+import com.bilisdk.service.tv.entity.resp.verifyqrcodeinfo.VerifyQRcodeInfoResp;
+import org.checkerframework.checker.units.qual.A;
 
 import java.io.File;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Random;
 
 public class CommonUtil {
+    public static String list2Cookie( VerifyQRcodeInfoResp verifyQRcodeInfoResp){
+        StringBuffer sb = new StringBuffer();
+        for (Cookies cookie : verifyQRcodeInfoResp.getData().getCookie_info().getCookies()) {
+           String stringTemp = "%s=%s;";
+           sb.append(String.format(stringTemp, cookie.getName(), cookie.getValue()));
+        }
+        String headTemp = "mid=%s;expires_in=%s;";
+        sb.append(String.format(headTemp, verifyQRcodeInfoResp.getData().getMid(), verifyQRcodeInfoResp.getData().getExpires_in()));
+        return sb.toString();
+    }
+
+    public static ArrayList<HashMap> readCookieOrToken(boolean isTv){
+        String path = isTv?"tv.txt":"web.txt";
+        ArrayList<HashMap> list = new ArrayList<>();
+        if(isTv){
+            List<String> cookies = FileUtil.readLines(new File(path), "UTF-8");
+            for (String cookie : cookies) {
+                cookie = cookie.split("】")[1];
+                HashMap lineMap = JSONUtil.parseObj(cookie).toBean(HashMap.class);
+                list.add(lineMap);
+            }
+        }
+
+        return list;
+
+    }
     public static void saveCookieOrToken(String content, boolean isToken){
         //将String写入文件，覆盖模式，字符集为UTF-8
 
-        String path = isToken?"tokens.txt":"cookies.txt";
+        String path = isToken?"tv.txt":"web.txt";
         //path指定路径下的文件如不存在，则创建
 
         try {
