@@ -115,11 +115,7 @@
       <version>1.18.26</version>
       <scope>provided</scope>
     </dependency>
-      <dependency>
-          <groupId>org.apache.logging.log4j</groupId>
-          <artifactId>log4j-slf4j-impl</artifactId>
-          <version>2.14.1</version> <!-- 请使用最新或兼容版本 -->
-      </dependency>
+
     <!-- https://mvnrepository.com/artifact/cn.hutool/hutool-all -->
     <dependency>
       <groupId>cn.hutool</groupId>
@@ -185,10 +181,7 @@
       <artifactId>forest-core</artifactId>
       <version>1.5.31</version>
         <exclusions>
-            <exclusion>
-                <artifactId>commons-io</artifactId>
-                <groupId>commons-io</groupId>
-            </exclusion>
+
             <exclusion>
                 <artifactId>commons-logging</artifactId>
                 <groupId>commons-logging</groupId>
@@ -199,6 +192,17 @@
             </exclusion>
         </exclusions>
     </dependency>
+      <dependency>
+          <groupId>org.slf4j</groupId>
+          <artifactId>slf4j-log4j12</artifactId>
+          <version>2.0.7</version>
+          <scope>compile</scope>
+      </dependency>
+      <dependency>
+          <groupId>ch.qos.logback</groupId>
+          <artifactId>logback-classic</artifactId>
+          <version>1.2.3</version> <!-- 替换为你需要的版本 -->
+      </dependency>
 
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>

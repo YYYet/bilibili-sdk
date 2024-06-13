@@ -19,12 +19,9 @@ public class Main
 {
 
     public static void main( String[] args ) throws UnsupportedEncodingException, NoSuchAlgorithmException, InterruptedException {
-//        OptionsParser parser = OptionsParser.newOptionsParser(ServerOptions.class);
-//        parser.parseAndExitUponError(args);
-//        ServerOptions options = parser.getOptions(ServerOptions.class);
-//        checkAction(parser, options);
-
-        TvLiveSdk tvLiveSdk = new TvLiveSdk();
-        tvLiveSdk.GetUserInfoWithIpByAndroid("2c38761b8135a545a60339dee09fdc41", "22148666");
+        OptionsParser parser = OptionsParser.newOptionsParser(ServerOptions.class);
+        parser.parseAndExitUponError(args);
+        ServerOptions options = parser.getOptions(ServerOptions.class);
+        checkAction(parser, options);
     }
 }

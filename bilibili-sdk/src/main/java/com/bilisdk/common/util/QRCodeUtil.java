@@ -5,6 +5,7 @@ import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.Base64;
 import javax.imageio.ImageIO;
 
 
@@ -12,7 +13,7 @@ import com.google.zxing.BarcodeFormat;
 import com.google.zxing.EncodeHintType;
 import com.google.zxing.qrcode.QRCodeWriter;
 import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
-import org.apache.commons.codec.binary.Base64;
+//import org.apache.commons.codec.binary.Base64;
 
 public class QRCodeUtil {
     public static String generateQRCodeBase64(String url, boolean needHead) throws IOException {
@@ -20,7 +21,7 @@ public class QRCodeUtil {
         int size = 200;
         String imageFormat = "png";
 
-        // Create QR Code from URL 
+        // Create QR Code from URL
         QRCodeWriter qrCodeWriter = new QRCodeWriter();
         java.util.Map<EncodeHintType, Object> hintMap = new java.util.HashMap<EncodeHintType, Object>();
         hintMap.put(EncodeHintType.ERROR_CORRECTION, ErrorCorrectionLevel.L);
@@ -56,8 +57,8 @@ public class QRCodeUtil {
         byte[] byteData = baos.toByteArray();
 
         // Encode bytearray to Base64 String
-        Base64 base64 = new Base64();
-        String base64QRCode = base64.encodeToString(byteData);
+
+        String base64QRCode =   Base64.getEncoder().encodeToString(byteData);
 
         return needHead?"data:image/png;base64,"+base64QRCode:base64QRCode;
     }
